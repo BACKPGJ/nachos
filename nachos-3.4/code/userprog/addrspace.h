@@ -39,6 +39,7 @@ class AddrSpace {
           // address space
   //public:
     OpenFile* vaSpace;        //  
+    char* vaName;
 };
 
 #endif // ADDRSPACE_H

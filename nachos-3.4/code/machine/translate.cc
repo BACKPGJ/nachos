@@ -105,7 +105,7 @@
                        return FALSE;
                 }     
       }
-      printf("Current Thread %d,  Read PhysicalPage %d\n", currentThread->GetThreadID(), physicalAddress/PageSize);
+      printf("Current Thread %d,  Read VPN %d PPN %d\n", currentThread->GetThreadID(), addr/PageSize, physicalAddress/PageSize);
       switch (size) {
         case 1:
     data = machine->mainMemory[physicalAddress];
@@ -161,7 +161,7 @@
                        return FALSE;
                 }     
       }
-      printf("Current Thread %d,  Write PhysicalPage %d\n", currentThread->GetThreadID(), physicalAddress/PageSize);
+      printf("Current Thread %d,  Write VPN %d PPN %d\n", currentThread->GetThreadID(), addr/PageSize, physicalAddress/PageSize);
       //printf("VirtualAddress: 0x%x,  PhysicalAddress : 0x%x\n", addr, physicalAddress);
       switch (size) {
         case 1:

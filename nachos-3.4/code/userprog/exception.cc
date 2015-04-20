@@ -57,9 +57,9 @@ ExceptionHandler(ExceptionType which)
   DEBUG('a', "Shutdown, initiated by user program.\n");
     interrupt->Halt();
     } else if ((which == SyscallException) && (type == SC_Exit)) {
-      int exitStatus = machine->ReadRegister(4);
-      printf("Exit %d\n", exitStatus);
-      currentThread->Finish();
+        int exitStatus = machine->ReadRegister(4);
+        printf("Thread %d Exit %d\n", currentThread->GetThreadID(), exitStatus);
+        currentThread->Finish();
     } else if ((which == SyscallException) && (type == SC_Print)){
           int value = machine->ReadRegister(4);
           printf("The Value is %d\n", value);

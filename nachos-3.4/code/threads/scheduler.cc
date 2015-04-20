@@ -93,7 +93,9 @@ Scheduler::FindNextToRun (bool fromSleep)
 
    // printf("-------------------------\n");
     FlushPriority();
-
+    printf("Current Thread: \n");
+    currentThread->Print();
+    scheduler->Print();
     int nextPriority, currentPriority;
     Thread* nextThread =  (Thread *)readyList->SortedRemove(&nextPriority);
     currentPriority = currentThread->getPriority();

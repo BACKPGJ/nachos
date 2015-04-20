@@ -169,8 +169,10 @@ Interrupt::OneTick()
     while (CheckIfDue(FALSE))		// check for pending interrupts
 	;
     ChangeLevel(IntOff, IntOn);		// re-enable interrupts
+
     if (yieldOnReturn) {		// if the timer device handler asked 
 					// for a context switch, ok to do it now
+              
 	yieldOnReturn = FALSE;
  	status = SystemMode;		// yield is a kernel routine
 	currentThread->Yield();

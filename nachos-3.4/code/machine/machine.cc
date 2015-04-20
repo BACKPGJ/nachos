@@ -229,7 +229,7 @@ void Machine::WriteRegister(int num, int value)
 
  void Machine::LRUSwapTLB(int badVAddr)
  {
-               printf("Bad Address 0x%x\n", badVAddr);
+               //printf("Bad Address 0x%x\n", badVAddr);
                unsigned int vpn = (unsigned) badVAddr / PageSize;    // 虚拟页号
                int minTime = tlb[0].lastUsedTime;
                TranslationEntry *entry = &tlb[0];          //  将要替换掉的页表项
@@ -274,11 +274,15 @@ void Machine::WriteRegister(int num, int value)
                       }
                }
                // 将TLB中将要替换下去的页表项的内容写回页表
-               if(entry->valid != FALSE)
-                      pageTable[entry->virtualPage] = *entry;                     
-               *entry = pageTable[vpn];
+                if (entry->valid)
+                      pageTable[entry->virtualPage] = *entry;               
+               if (pageTable[vpn].valid)
+                      *entry = pageTable[vpn];                        
+               else {
+                      AllocatePhysPage(badVAddr);
+                      *entry = pageTable[vpn];
+               } 
                entry->inTLBTime = stats->totalTicks;
-               entry->lastUsedTime = stats->totalTicks;
  }
 
 void Machine::ClearTLB() {
@@ -328,23 +332,19 @@ void Machine::ClearTLB() {
 
  int Machine::LRUSwapPages()
  {
-               printf("LRU GET PHY MEM\n");
                int minTime = physPageTable[0].lastUsedTime;
-               int i;
                int swapPageNum= 0;
-               for (i = 0; i < NumPhysPages; ++i) {
-                        // printf("lastUsedTime: %d\n", physPageTable[i].lastUsedTime);
+               for (int i = 0; i < NumPhysPages; ++i) {
                         if (physPageTable[i].lastUsedTime < minTime) {
                                 minTime = physPageTable[i].lastUsedTime;
                                 swapPageNum = i;
                       }
                }
-               printf("Current %d, Swap Page : %d\n", currentThread->GetThreadID(), swapPageNum);
-                //printf("The swaped Page,  vpn: %d, %d\n", swapPageNum, physPageTable[swapPageNum].vaPageNum);
+               printf("Swap Page %d\n", swapPageNum);
                Thread* tempThread = threadsInfo[physPageTable[swapPageNum].heldThreadID];
-               if (tempThread != NULL && physPageTable[swapPageNum].valid && physPageTable[swapPageNum].dirty) {         // 写回文件
-                      printf("WriteBack!\n");
-                      printf("Temp: %d, Current: %d", tempThread->GetThreadID(), currentThread->GetThreadID());
+               if (tempThread != NULL && physPageTable[swapPageNum].valid 
+               && physPageTable[swapPageNum].dirty) {         // 写回文件
+                      
                       tempThread->space->vaSpace->WriteAt(&(machine->mainMemory[swapPageNum * PageSize]), 
                         PageSize,  physPageTable[swapPageNum].vaPageNum * PageSize);
                }

@@ -74,10 +74,8 @@ AddrSpace::AddrSpace(OpenFile *executable)
     size = noffH.code.size + noffH.initData.size + noffH.uninitData.size 
             + UserStackSize;    // we need to increase the size
                         // to leave room for the stack
-   printf("NumPages: %d\n", numPages);
     numPages = divRoundUp(size, PageSize);
     size = numPages * PageSize;
-    printf("NumPages: %d\n", numPages);
 
   //  ASSERT(numPages <= NumPhysPages);     // check we're not trying
                         // to run anything too big --
@@ -99,14 +97,15 @@ AddrSpace::AddrSpace(OpenFile *executable)
     strcpy(fileName, threadName);
     char* endFile = ".va";
     strcat(fileName, endFile);
-    printf("%s\n", fileName);
+    vaName = fileName;
     if (fileSystem->Create(fileName, size))
         vaSpace = fileSystem->Open(fileName);
     else {
         printf("Can not Create the File!\n");
         ASSERT(FALSE);
     }
-  
+   
+
     printf("NumPages: %d\n", numPages);
     printf("NoffHeader: \n");
     printf("Code: 0x%x, 0x%x, 0x%x\n", noffH.code.virtualAddr, noffH.code.inFileAddr, noffH.code.size);
@@ -136,7 +135,7 @@ AddrSpace::AddrSpace(OpenFile *executable)
             printf("The physical memory is Full!\n");
             break;
         }
-        printf("PPN %d\n", ppn);
+        //printf("PPN %d\n", ppn);
         pageTable[i].physicalPage = ppn;
         pageTable[i].virtualPage = i;
         pageTable[i].valid = TRUE;
@@ -162,6 +161,7 @@ AddrSpace::AddrSpace(OpenFile *executable)
 AddrSpace::~AddrSpace()
 {
    delete pageTable;
+   fileSystem->Remove(vaName);
    delete vaSpace;
 }
 

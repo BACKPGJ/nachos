@@ -26,7 +26,7 @@
 // dummy function because C++ does not allow pointers to member functions
 static void TimerHandler(int arg)
 { 
-    printf("Ticks: %d, TimeInterrept!\n", stats->totalTicks);
+    printf("Ticks: %d, TimeInterrupt!\n", stats->totalTicks);
         //scheduler->Print(); 
        // printf("CurrentThread: %s %d\n", currentThread->getName(), currentThread->getPriority());
         Timer *p = (Timer *)arg; 
